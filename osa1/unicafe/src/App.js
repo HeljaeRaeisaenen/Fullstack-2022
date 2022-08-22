@@ -5,6 +5,7 @@ const App = () => {
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
+  let total = good+neutral+bad
 
   return (
     <div>
@@ -18,6 +19,13 @@ const App = () => {
       <p>good {good}</p>
       <p>neutral {neutral}</p>
       <p>bad {bad}</p>
+      <p>all {total}</p>
+      <p>
+        <AverageClicks good={good} bad={bad} total={total}/> 
+      </p>
+      <p>
+        <PositiveClicks good={good} total={total}/> 
+      </p>
     </div>
   )
 }
@@ -26,6 +34,16 @@ const Button = ({text, handleClick}) => {
   return <button onClick={handleClick}>
     {text}
   </button>
+}
+
+const AverageClicks = ({good, bad, total}) => {
+  if (total === 0) return "average 0"
+  return `average ${(good + -bad / total)}`
+}
+
+const PositiveClicks = ({good, total}) => {
+  if (total === 0) return "positive 0%"
+  return `positive ${good / total}%`
 }
 
 export default App
