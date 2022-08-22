@@ -36,6 +36,8 @@ const Button = ({text, handleClick}) => {
   </button>
 }
 
+
+
 const AverageClicks = ({good, bad, total}) => {
   if (total === 0) return "average 0"
   return `average ${(good + -bad / total)}`
