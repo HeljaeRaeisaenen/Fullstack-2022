@@ -27,6 +27,7 @@ const Button = ({text, handleClick}) => {
 }
 
 const Statistics = ({good, neutral, bad, total}) => {
+  if (total === 0) return <p>no feedback given</p>
   return(
   <>
     <h2>statistics</h2>
@@ -45,12 +46,10 @@ const Statistics = ({good, neutral, bad, total}) => {
 }
 
 const AverageClicks = ({good, bad, total}) => {
-  if (total === 0) return "average 0"
   return `average ${((good + (0-bad)) / total)}`
 }
 
 const PositiveClicks = ({good, total}) => {
-  if (total === 0) return "positive 0%"
   return `positive ${(good / total)*100}%`
 }
 
