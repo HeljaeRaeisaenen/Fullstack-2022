@@ -6,6 +6,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterBy, setFilterBy] = useState('')
+  const [message, setMessage] = useState(undefined)
+  const [error, setError] = useState(false)
 
 
   useEffect(() => {
@@ -50,36 +52,103 @@ const App = () => {
 
     service.createPerson({name: newName, phonenumber: newNumber})
     .then(response => setPersons(persons.concat(response)))
-
+    setMessage(`Added ${newName}`)
     VoidFormFields()
   }
 
 
   const HandleDelete = ({name, id}) => {
     if (window.confirm(`Are you sure you want to delete ${name}?`)) {
-      service.deletePerson(id).then(response => setPersons(response))
+      service
+        .deletePerson(id)
+        .then(response => {
+          setPersons(response)
+          setMessage(`Deleted ${name}`)
+        })
+        .catch(() => setError(name))
     }
   }
 
 
   const UpdateContact = ({sameName}) => {
     if (window.confirm(`${newName} is already listed. Do you want to replace the number of ${newName}?`)) {
-    service
-      .updatePerson({...sameName, phonenumber: newNumber})
-      .then(response => setPersons(response))
-    VoidFormFields()
+      service
+        .updatePerson({...sameName, phonenumber: newNumber})
+        .then(response => {
+          setPersons(response)
+          setMessage(`Updated ${newName}`)
+          VoidFormFields()
+        })
+        .catch(() => {
+          console.log(':3')
+          setError(newName)})
     }
   }
 
+  const Errors = () => {
+    if (error === false) return
+
+    const errorStyle = {
+      color: 'red',
+      background: 'lightgrey',
+      fonstStyle: 'bold',
+      borderStyle: 'groove',
+      borderWidth: 10,
+      borderColor: 'red',
+      fontSize: 20
+    }
+
+    return <DisplayMessage
+      text={`${error} has been deleted from the server`}
+      style={errorStyle}
+      method={setError}
+      val={false}/>
+  }
+
+
+  const Messages = () => {
+    if (typeof message === 'undefined') return
+
+    const messagesStyle = {
+      color: 'blue',
+      background: 'lightgrey',
+      fonstStyle: 'bold',
+      borderStyle: 'groove',
+      borderWidth: 10,
+      borderColor: 'lightblue',
+      fontSize: 20
+    }
+
+    return <DisplayMessage 
+      text={message} 
+      style={messagesStyle}
+      method={setMessage}
+      val={undefined}/>
+  }
+
+  const DisplayMessage = ({text, style, method, val}) => {
+    setTimeout(() => {
+      method(val)
+    }, 4000)
+    return (
+      <div style={style}>
+        {text}
+      </div>
+    )
+  }
 
   const VoidFormFields = () => {
     setNewName('')
     setNewNumber('')
   }
 
+
   return (
     <div>
       <h1>Phonebook</h1>
+      <Messages/>
+      <Errors/>
+      <br />
       <div>
         Filter shown contacts with: 
         <input value={filterBy}
