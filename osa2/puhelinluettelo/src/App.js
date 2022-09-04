@@ -37,11 +37,7 @@ const App = () => {
     const sameName = persons.find(element => element.name===newName)
     
     if (typeof sameNum !== 'undefined') {
-      if (typeof sameName !== 'undefined') {
-        alert(`Number ${newNumber} is already in use by ${newName}`)
-        return
-      }
-      alert(`Number ${newNumber} is already taken :(`)
+      alert(`Number ${newNumber} is already in use`)
       return
     }
 
@@ -80,7 +76,6 @@ const App = () => {
           VoidFormFields()
         })
         .catch(() => {
-          console.log(':3')
           setError(newName)})
     }
   }
