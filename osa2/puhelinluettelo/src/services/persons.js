@@ -19,14 +19,14 @@ const deletePerson = id => {
     const url = `${baseUrl}/${id}`
     return axios
     .delete(url)
-    .then(() => {return getAllPersons()})
+    .then((response) => {return getAllPersons()})
 }
 
 const updatePerson = newObject => {
     const url = `${baseUrl}/${newObject.id}`
     return axios
     .put(url, newObject)
-    .then(() => getAllPersons())
+    .then((response) => getAllPersons())
 }
 
 export default {getAllPersons, createPerson, deletePerson, updatePerson}

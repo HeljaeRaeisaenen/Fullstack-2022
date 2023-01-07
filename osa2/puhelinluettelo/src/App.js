@@ -33,6 +33,11 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault()
 
+//    if (typeof newName == null || typeof newNumber == null) {
+//      alert('Name and phonenumber are required')
+//      return
+//    }
+
     const sameNum = persons.find(element => element.phonenumber===newNumber)
     const sameName = persons.find(element => element.name===newName)
     
@@ -47,9 +52,14 @@ const App = () => {
     }
 
     service.createPerson({name: newName, phonenumber: newNumber})
-    .then(response => setPersons(persons.concat(response)))
-    setMessage(`Added ${newName}`)
-    VoidFormFields()
+    .then(response => {
+      setPersons(persons.concat(response))
+      setMessage(`Added ${newName}`)
+      VoidFormFields()
+    })
+    .catch(error => {
+      setError(error.response.data.error)
+    })
   }
 
 
@@ -58,10 +68,13 @@ const App = () => {
       service
         .deletePerson(id)
         .then(response => {
-          setPersons(response)
+          console.log(response)
           setMessage(`Deleted ${name}`)
+
         })
-        .catch(() => setError(name))
+        .catch(error => setError(error))
+      service.getAllPersons().then(response =>
+        setPersons(response))
     }
   }
 
@@ -72,11 +85,11 @@ const App = () => {
         .updatePerson({...sameName, phonenumber: newNumber})
         .then(response => {
           setPersons(response)
+          console.log(response)
           setMessage(`Updated ${newName}`)
           VoidFormFields()
         })
-        .catch(() => {
-          setError(newName)})
+        .catch(() => setError(`${newName} has been deleted from the server`))
     }
   }
 
@@ -94,7 +107,7 @@ const App = () => {
     }
 
     return <DisplayMessage
-      text={`${error} has been deleted from the server`}
+      text={error}
       style={errorStyle}
       method={setError}
       val={false}/>
