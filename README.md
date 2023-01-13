@@ -1,4 +1,4 @@
 # Fullstack-2022
 Fullstack 2022
 
-[puhelinluettelo backend-koodi](https://github.com/HeljaeRaeisaenen/puhelinluettelo)
+[puhelinluettelo backend-koodi eli osa 3 tehtävät](https://github.com/HeljaeRaeisaenen/puhelinluettelo)
