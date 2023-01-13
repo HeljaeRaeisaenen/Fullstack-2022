@@ -33,10 +33,10 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault()
 
-//    if (typeof newName == null || typeof newNumber == null) {
-//      alert('Name and phonenumber are required')
-//      return
-//    }
+    if ((typeof newName == null) || (typeof newNumber == null)) {
+      alert('Name and phonenumber are required')
+      return
+    }
 
     const sameNum = persons.find(element => element.phonenumber===newNumber)
     const sameName = persons.find(element => element.name===newName)
@@ -89,7 +89,7 @@ const App = () => {
           setMessage(`Updated ${newName}`)
           VoidFormFields()
         })
-        .catch(() => setError(`${newName} has been deleted from the server`))
+        .catch(() => setError(`${error.response.data.error}`)) //prev. `${newName} has been deleted from the server`
     }
   }
 
