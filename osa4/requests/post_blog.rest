@@ -2,8 +2,9 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Kaarina",
-    "author": "12345",
-    "url": "ojihe.gov",
-    "likes": 4
+    "title": "Julius Caesar >:(",
+    "author": "Brutus",
+    "url": "blog.brutus.org",
+    "likes": 1,
+    "userId": "63e661e37efaa798f1b4239b"
 }
