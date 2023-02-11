@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
+
 const app = require('../app')
 const { dbBlogs, bloglist } = require('./test_helper')
 
@@ -11,6 +14,16 @@ beforeEach(async () => {
   for (const blog of dbBlogs) {
     let blogObject = new Blog(blog)
     await blogObject.save()
+
+  await User.deleteMany({})
+
+  const passwordHash = await bcrypt.hash('pawsword', 10)
+  const user = new User({ username: 'root', passwordHash: passwordHash })
+
+  await user.save()
+  await api
+    .post('/api/login')
+    .send({username: 'root', password: 'pawsword'})
   }
 })
 
@@ -127,9 +140,9 @@ test('blog can be deleted', async () => {
     .expect(201)
 
   await api
-    .delete(`/api/blogs{${newblog._id}`)
+    .delete(`/api/blogs/${newblog._id}`) // { \/
   await api
-    .get(`/api/blogs{${newblog._id}`)
+    .get(`/api/blogs/${newblog._id}`)
     .expect(404)
 
     

@@ -1,17 +1,23 @@
+const supertest = require('supertest')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
 const helper = require('./test_helper')
 
+const app = require('../app')
+api = supertest(app)
 
 describe('when there is initially one user at db', () => {
     beforeEach(async () => {
       await User.deleteMany({})
   
       const passwordHash = await bcrypt.hash('pawsword', 10)
-      const user = new User({ username: 'root', passwordHash })
+      const user = new User({ username: 'root', passwordHash: passwordHash })
   
       await user.save()
-    })
+      await api
+        .post('/api/login')
+        .send({username: 'root', password: 'pawsword'})
+    }, 10000)
   
     test('user created with valid user name', async () => {
       const usersAtStart = await helper.usersInDb()
@@ -56,3 +62,16 @@ describe('when there is initially one user at db', () => {
         expect(usersAtEnd).toHaveLength(usersAtStart.length)
       })
   })
+    test('user cant be created with invalid password', async () => {
+      const newUser = {
+        username: 'uusi',
+        name: 'Uusi Kayttaja',
+        password: '1',
+      }
+  
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+    })
