@@ -7,10 +7,10 @@ const cors = require('cors')
 const blogRouter = require('./controllers/blogs')
 const userRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
-const mongoose = require('mongoose')
 const config = require('./utils/config')
-const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
+const logger = require('./utils/logger')
+const mongoose = require('mongoose')
 
 
 
