@@ -69,9 +69,11 @@ describe('when there is initially one user at db', () => {
         password: '1',
       }
   
-      await api
+      const result = await api
         .post('/api/users')
         .send(newUser)
         .expect(400)
         .expect('Content-Type', /application\/json/)
+      
+      expect(result.body.error).toContain('Password must be more than 3 characters long')
     })

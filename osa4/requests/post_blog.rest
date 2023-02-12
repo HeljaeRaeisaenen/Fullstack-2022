@@ -1,10 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiYyIsImlkIjoiNjNlN2MzNWQ5ZDY2NWVkMDdhMzBkMjMwIiwiaWF0IjoxNjc2MTkxMjEwLCJleHAiOjE2NzYxOTQ4MTB9.2E83IbWIP2CVXju-_UJjY_2mE9jhTwUAf9nkPLfjRO0
 
 {
-    "title": "Julius Caesar >:(",
-    "author": "Brutus",
-    "url": "blog.brutus.org",
-    "likes": 1,
-    "userId": "63e661e37efaa798f1b4239b"
+    "title": "The history of Musique Concrete",
+    "author": "ÄHfäeh",
+    "url": "music.org",
+    "likes": 5
 }
