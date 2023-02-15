@@ -42,14 +42,25 @@ blogRouter.post('/', async (request, response) => {
 })
 
 blogRouter.put('/:id', async (request, response) => {
-  const blog = {
+  const blog = await Blog
+    .findById(request.params.id)
+
+  if (blog == null) {
+    return response.status(404).end()
+  }
+
+  if (!request.userId.toString() === blog.user.toString()) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const newblog = {
     title: request.body.title,
     author: request.body.author,
     url: request.body.url,
+    user: request.userId,
     likes: request.body.likes
   }
 
-  const updatedblog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true,
+  const updatedblog = await Blog.findByIdAndUpdate(request.params.id, newblog, { new: true,
     runValidators: true, context: 'query' })
   response.json(updatedblog)
 })
@@ -57,6 +68,10 @@ blogRouter.put('/:id', async (request, response) => {
 blogRouter.delete('/:id', async (request, response) => {
   const blog = await Blog
     .findById(request.params.id)
+
+  if (blog == null) {
+    return response.status(404).end()
+  }
 
   if (!request.userId.toString() === blog.user.toString()) {
     return response.status(401).json({ error: 'token invalid' })

@@ -8,6 +8,8 @@ const app = require('../app')
 const { dbBlogs, bloglist } = require('./test_helper')
 
 const api = supertest(app)
+let token = ''
+let rootid = ''
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -18,12 +20,16 @@ beforeEach(async () => {
   await User.deleteMany({})
 
   const passwordHash = await bcrypt.hash('pawsword', 10)
-  const user = new User({ username: 'root', passwordHash: passwordHash })
-
-  await user.save()
-  await api
+  //const user = new User({ username: 'root', passwordHash: passwordHash })
+  const user = await api.post('/api/users').send({username: 'root', password: 'pawsword'})
+  rootid = user.body.id 
+  //await user.save()
+//blogs saved don't have user field!!!!!!!!!!!!!!!
+  const response = await api
     .post('/api/login')
     .send({username: 'root', password: 'pawsword'})
+
+  token = 'Bearer ' + response.body.token
   }
 })
 
@@ -67,6 +73,7 @@ test('blog can be added', async () => {
   await api
     .post('/api/blogs')
     .send(newblog)
+    .set({ Authorization: token })
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
@@ -88,6 +95,7 @@ test('blog without title cant be added', async () => {
       await api
         .post('/api/blogs')
         .send(newblog)
+        .set({ Authorization: token })
         .expect(400)    
 })
 
@@ -101,6 +109,7 @@ test('blog without url cant be added', async () => {
       await api
         .post('/api/blogs')
         .send(newblog)
+        .set({ Authorization: token })
         .expect(400)    
 })
 
@@ -114,14 +123,15 @@ test('likes field value default 0', async () => {
   await api
     .post('/api/blogs')
     .send(newblog)
+    .set({ Authorization: token })
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
   const response = await api.get('/api/blogs')
   const likes = response.body.map(r => r.likes)
 
-  for (inst of likes) {
-    expect(inst).toBeDefined()
+  for (one of likes) {
+    expect(one).toBeDefined()
   }
 })
 
@@ -137,12 +147,15 @@ test('blog can be deleted', async () => {
   await api
     .post('/api/blogs')
     .send(newblog)
+    .set({ Authorization: token })
     .expect(201)
 
   await api
-    .delete(`/api/blogs/${newblog._id}`) // { \/
+    .delete(`/api/blogs/${newblog._id}`)
+    .set({ Authorization: token })
   await api
     .get(`/api/blogs/${newblog._id}`)
+    .set({ Authorization: token })
     .expect(404)
 
     
@@ -150,14 +163,20 @@ test('blog can be deleted', async () => {
 
 test ('blog can be modified', async () => {
   const blog = dbBlogs[0]
+  blog.user = rootid
   blog.likes = 456
+  console.log(blog)
   
   await api
     .put(`/api/blogs/${blog._id}`)
     .send(blog)
+    .set({ Authorization: token })
+    .expect(201)
 
   const modified = await api
     .get(`/api/blogs/${blog._id}`)
+
+  console.log(modified)
 
   expect(modified.body.likes).toBe(456)
 
@@ -166,4 +185,3 @@ test ('blog can be modified', async () => {
 afterAll(async () => {
   await mongoose.connection.close()
 })
-
