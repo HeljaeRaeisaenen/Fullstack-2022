@@ -52,6 +52,7 @@ blogRouter.put('/:id', async (request, response) => {
   if (!request.userId.toString() === blog.user.toString()) {
     return response.status(401).json({ error: 'token invalid' })
   }
+
   const newblog = {
     title: request.body.title,
     author: request.body.author,
@@ -62,7 +63,7 @@ blogRouter.put('/:id', async (request, response) => {
 
   const updatedblog = await Blog.findByIdAndUpdate(request.params.id, newblog, { new: true,
     runValidators: true, context: 'query' })
-  response.json(updatedblog)
+  response.status(201).json(updatedblog)
 })
 
 blogRouter.delete('/:id', async (request, response) => {

@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const bcrypt = require('bcrypt')
 
 const app = require('../app')
 const { dbBlogs, bloglist } = require('./test_helper')
@@ -12,24 +11,22 @@ let token = ''
 let rootid = ''
 
 beforeEach(async () => {
-  await Blog.deleteMany({})
-  for (const blog of dbBlogs) {
-    let blogObject = new Blog(blog)
-    await blogObject.save()
-
   await User.deleteMany({})
 
-  const passwordHash = await bcrypt.hash('pawsword', 10)
-  //const user = new User({ username: 'root', passwordHash: passwordHash })
   const user = await api.post('/api/users').send({username: 'root', password: 'pawsword'})
   rootid = user.body.id 
-  //await user.save()
-//blogs saved don't have user field!!!!!!!!!!!!!!!
+
   const response = await api
     .post('/api/login')
     .send({username: 'root', password: 'pawsword'})
 
   token = 'Bearer ' + response.body.token
+
+  await Blog.deleteMany({})
+  for (let blog of dbBlogs) {
+    blog.user = rootid
+    let blogObject = new Blog(blog)
+    await blogObject.save()
   }
 })
 
@@ -118,7 +115,8 @@ test('likes field value default 0', async () => {
     _id: "5a422bc61b54a676234d17fc",
     title: "Type wars",
     author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html"}
+    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+    user: rootid}
 
   await api
     .post('/api/blogs')
@@ -161,11 +159,11 @@ test('blog can be deleted', async () => {
     
 })
 
-test ('blog can be modified', async () => {
-  const blog = dbBlogs[0]
+test('blog can be modified', async () => {
+  let blog = dbBlogs[0]
   blog.user = rootid
   blog.likes = 456
-  console.log(blog)
+
   
   await api
     .put(`/api/blogs/${blog._id}`)
@@ -175,8 +173,6 @@ test ('blog can be modified', async () => {
 
   const modified = await api
     .get(`/api/blogs/${blog._id}`)
-
-  console.log(modified)
 
   expect(modified.body.likes).toBe(456)
 

@@ -13,6 +13,7 @@ const oneblog = [{
     title: "React patterns",
     author: "Michael Chan",
     url: "https://reactpatterns.com/",
+    user: '',
     likes: 7,
     __v: 0
   }]
@@ -23,6 +24,7 @@ const bloglist = [
     title: "React patterns",
     author: "Michael Chan",
     url: "https://reactpatterns.com/",
+    user: '',
     likes: 7,
     __v: 0
   },
@@ -31,6 +33,7 @@ const bloglist = [
     title: "Go To Statement Considered Harmful",
     author: "Edsger W. Dijkstra",
     url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+    user: '',
     likes: 5,
     __v: 0
   },
@@ -39,6 +42,7 @@ const bloglist = [
     title: "Canonical string reduction",
     author: "Edsger W. Dijkstra",
     url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    user: '',
     likes: 12,
     __v: 0
   },
@@ -47,6 +51,7 @@ const bloglist = [
     title: "First class tests",
     author: "Robert C. Martin",
     url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+    user: '',
     likes: 10,
     __v: 0
   },
@@ -55,6 +60,7 @@ const bloglist = [
     title: "TDD harms architecture",
     author: "Robert C. Martin",
     url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
+    user: '',
     likes: 0,
     __v: 0
   },
@@ -63,6 +69,7 @@ const bloglist = [
     title: "Type wars",
     author: "Robert C. Martin",
     url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+    user: '',
     likes: 2,
     __v: 0
   }  
@@ -73,6 +80,7 @@ const dbBlogs = [{
     title: "React patterns",
     author: "Michael Chan",
     url: "https://reactpatterns.com/",
+    user: '',
     likes: 7,
     __v: 0
   },
@@ -81,6 +89,7 @@ const dbBlogs = [{
     title: "Go To Statement Considered Harmful",
     author: "Edsger W. Dijkstra",
     url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+    user: '',
     likes: 5,
     __v: 0
   }]
