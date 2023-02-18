@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiYyIsImlkIjoiNjNlN2MzNWQ5ZDY2NWVkMDdhMzBkMjMwIiwiaWF0IjoxNjc2MTkyMTkyLCJleHAiOjE2NzYxOTU3OTJ9.LzGlbiUdeog3xNuCJO-R-Sfc5KlwbXEV-pBoJOLF9VU
+
+{
+    "title": "The history of Musique Concrete",
+    "author": "ÄHfäeh",
+    "url": "music.org",
+    "likes": 5
+}
