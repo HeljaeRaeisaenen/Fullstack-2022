@@ -7,14 +7,14 @@ const setToken = newToken => {
   token = `Bearer ${newToken}`
 }
 
-const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+const getAll = async () => {
+  const response = await axios.get(baseUrl)
+  return response.data //request.then(response => response.data)
 }
 
-const getOne = (id) => {
-  const request = axios.get(baseUrl+'/'+id)
-  return request.then(response => response.data)
+const getOne = async (id) => {
+  const response = await axios.get(`${baseUrl}/${id}`)
+  return response.data
 }
 
 const create = async (newObject, id) => {
@@ -26,13 +26,17 @@ const create = async (newObject, id) => {
   const response = await axios.post(baseUrl, newObject, config)
 
   id = response.data.id
-  const response2 = await axios.get(`${baseUrl}/${id}`)
-  return response2.data
+  const response2 = await getOne(id)//await axios.get(`${baseUrl}/${id}`)
+  return response2
 }
 
-const update = (id, newObject) => {
-  const request = axios.put(`${ baseUrl } /${id}`, newObject)
-  return request.then(response => response.data)
+const update = async (id, newObject) => {
+
+  const config = {
+    headers: { Authorization: token },
+  }
+  const response = await axios.put(`${ baseUrl }/${id}`, newObject, config)
+  return response.data
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

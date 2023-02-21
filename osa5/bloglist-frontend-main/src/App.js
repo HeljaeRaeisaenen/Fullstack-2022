@@ -89,6 +89,17 @@ const App = () => {
     setUser(null)
   }
 
+  const handleLike = async (event, id) => {
+    event.preventDefault()
+    console.log('id', id)
+    let blog = await blogService.getOne(id)
+    
+    blog.likes += 1
+    console.log(blog)
+    blogService.update(id, blog)
+    // it works! now just make the like count update instantly
+  }
+
   const logoutButton = () => {
     return <button onClick={handleLogout}>log out</button>
   }
@@ -116,11 +127,6 @@ const App = () => {
     </Togglable>
   )}
 
-  const blogView = () => {
-    return (
-      <Togglable buttonLabel="view" cancelLabel='hide'>
-      </Togglable>
-  )}
 
   const Errors = () => {
     if (errorMessage === null) return
@@ -185,7 +191,7 @@ const App = () => {
         {blogForm()}
         <h2>blogs</h2>
         {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} />
         )}
         </div>}
 

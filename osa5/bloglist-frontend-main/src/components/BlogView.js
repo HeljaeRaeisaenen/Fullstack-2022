@@ -1,15 +1,13 @@
-const BlogView = ({blog}) => {
+const BlogView = ({blog, handleLike}) => {
   return <div>
     <p>{blog.url}</p>
     <p>Submitted by {blog.user.username}</p>
-    <p>{blog.likes} likes <LikeButton/></p>
+    <p>{blog.likes} likes 
+    <button id={blog.id} onClick={(e) => handleLike(e, blog.id)}>like</button></p>
 
   </div>   
 }
 
 
-const LikeButton = () => {
-    return <button onClick={() => {return}}>like</button>
-  }
 
 export default BlogView

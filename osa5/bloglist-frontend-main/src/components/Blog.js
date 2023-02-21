@@ -1,7 +1,7 @@
 import Togglable from './TogglableTag'
 import BlogView from './BlogView'
 
-const Blog = ({blog}) => {
+const Blog = ({blog, handleLike}) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -12,7 +12,7 @@ const Blog = ({blog}) => {
 
   return <div style={blogStyle}>
     "{blog.title}" by {blog.author} <Togglable buttonLabel='view' cancelLabel='hide'>
-    <BlogView blog={blog}/>
+    <BlogView blog={blog} handleLike={handleLike}/>
     </Togglable>
   </div>  
 }
