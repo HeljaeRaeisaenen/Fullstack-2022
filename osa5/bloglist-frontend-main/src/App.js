@@ -1,35 +1,23 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/TogglableTag'
-
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
-  const [newLikes, setNewLikes] = useState('')
-
-  const blogSetter = {
-    title: setNewTitle,
-    author: setNewAuthor,
-    url: setNewUrl,
-    likes: setNewLikes
-  }
+  const [blogs, setBlogs] = useState([])  
 
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
 
 
   const [errorMessage, setErrorMessage] = useState(null)
   const [message, setMessage] = useState(null)
+
+  const toggleRef = useRef()
 
 
   useEffect(() => {
@@ -49,22 +37,24 @@ const App = () => {
     }
   }, [])
 
-  const loginForm = () => {
-    
 
-    return (
-      <Togglable buttonLabel="login">
+  const createBlog = async (blogObject) => {
+    try {
+      const createdBlog = await blogService
+        .create(blogObject)
+      
+      setBlogs(blogs.concat(createdBlog))
+      //console.log('in method createblog',createdBlog)
 
-          <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
-            handleSubmit={handleLogin}
-          />
+      setMessage(`Blog ${createdBlog.title} added succesfully`)
+      toggleRef.current.toggleVisibility()
+      return true
+      
 
-      </Togglable>
-    )
+    } catch (exception){
+      setErrorMessage('Fill all fields')
+      return false
+    }  
   }
 
   const handleLogin = async (event) => {
@@ -84,7 +74,7 @@ const App = () => {
       //experiment:
       setTimeout(() => {
         console.log('automatic logout')
-        window.localStorage.clear()
+        handleLogout()
       }, 15*60000)
     } catch (exception) {
       setErrorMessage('wrong credentials')
@@ -99,62 +89,38 @@ const App = () => {
     setUser(null)
   }
 
-  const handleBlogChange = (event) => {
-    //let blog = newBlog
-    //blog[event.target.name] = event.target.value
-    let name = event.target.name
-    let value = event.target.value
-    blogSetter[name](value)
-  }
-
-  const addBlog = async (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl,
-      likes: newLikes
-    }
-    console.log(blogObject)
-
-    try {
-      const createdBlog = await blogService
-        .create(blogObject)
-      setBlogs(blogs.concat(createdBlog))
-
-      setMessage(`Blog ${createdBlog.title} added succesfully`)
-      voidFormFields()
-
-    } catch (exception){
-      setErrorMessage('Fill all fields')
-    }  
-  }
-
-  const voidFormFields = () => {
-    setNewTitle('')
-    setNewAuthor('')
-    setNewUrl('')
-    setNewLikes('')
-  }
-
   const logoutButton = () => {
     return <button onClick={handleLogout}>log out</button>
   }
 
   const blogForm = () => {
-    return <Togglable buttonLabel="add new blog">
+    return <Togglable buttonLabel="add new blog" cancelLabel='cancel' ref={toggleRef}>
       <BlogForm
-        onSubmit={addBlog}
-        value={{
-          title: newTitle,
-          author: newAuthor,
-          url: newUrl,
-          likes: newLikes
-        }}
-        handleChange={handleBlogChange}
+        createBlog={createBlog}
         />
     </Togglable>
   }
+
+  const loginForm = () => {
+    return (
+    <Togglable buttonLabel="login" cancelLabel='cancel'>
+
+        <LoginForm
+          username={username}
+          password={password}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          handleSubmit={handleLogin}
+        />
+
+    </Togglable>
+  )}
+
+  const blogView = () => {
+    return (
+      <Togglable buttonLabel="view" cancelLabel='hide'>
+      </Togglable>
+  )}
 
   const Errors = () => {
     if (errorMessage === null) return

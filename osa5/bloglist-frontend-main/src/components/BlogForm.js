@@ -1,40 +1,85 @@
-const BlogForm = ({ onSubmit, handleChange, value }) => {
-    return (
+import { useState, useEffect } from 'react'
+
+const BlogForm = ({ 
+  createBlog
+ }) => {
+
+  const [newTitle, setNewTitle] = useState('')
+  const [newAuthor, setNewAuthor] = useState('')
+  const [newUrl, setNewUrl] = useState('')
+  const [newLikes, setNewLikes] = useState('')
+
+  const blogSetter = {
+    title: setNewTitle,
+    author: setNewAuthor,
+    url: setNewUrl,
+    likes: setNewLikes
+  }
+
+  const handleBlogChange = (event) => {
+    //let blog = newBlog
+    //blog[event.target.name] = event.target.value
+    let name = event.target.name
+    let value = event.target.value
+    blogSetter[name](value)
+  }
+
+  const voidFormFields = () => {
+    setNewTitle('')
+    setNewAuthor('')
+    setNewUrl('')
+    setNewLikes('')
+  }
+  
+  const addBlog = async (event) => {
+    event.preventDefault()
+    const blogObject = {
+      title: newTitle,
+      author: newAuthor,
+      url: newUrl,
+      likes: newLikes
+    }
+    console.log(blogObject)
+    const success = createBlog(blogObject)
+    if (success === true) {voidFormFields()}
+  }
+  
+  return (
       <div>
         <h2>Add a new blog</h2>
   
 
-      <form onSubmit={onSubmit}>
+      <form onSubmit={addBlog}>
         <div>
         title: 
         <input
-          value={value.title}
+          value={newTitle}
           name="title"
-          onChange={handleChange}
+          onChange={handleBlogChange}
         />
         </div>
         <div>
         author: 
         <input
-          value={value.author}
+          value={newAuthor}
           name="author"
-          onChange={handleChange}
+          onChange={handleBlogChange}
         />
         </div>
         <div>
         URL: 
         <input
-          value={value.url}
+          value={newUrl}
           name="url"
-          onChange={handleChange}
+          onChange={handleBlogChange}
         />
         </div>
         <div>
         likes: 
         <input
-          value={value.likes}
+          value={newLikes}
           name="likes"
-          onChange={handleChange}
+          onChange={handleBlogChange}
         />
         </div>
         <button type="submit">save</button>
