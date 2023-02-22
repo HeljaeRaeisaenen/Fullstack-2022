@@ -7,10 +7,10 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])  
+  const [blogs, setBlogs] = useState([])
 
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
 
@@ -53,19 +53,19 @@ const App = () => {
     try {
       const createdBlog = await blogService
         .create(blogObject)
-      
+
       setBlogs(blogs.concat(createdBlog).sort(blogSort))
       //console.log('in method createblog',createdBlog)
 
       setMessage(`Blog ${createdBlog.title} added succesfully`)
       toggleRef.current.toggleVisibility()
       return true
-      
+
 
     } catch (exception){
       setErrorMessage('Fill all fields')
       return false
-    }  
+    }
   }
 
   const handleLogin = async (event) => {
@@ -104,7 +104,7 @@ const App = () => {
     event.preventDefault()
     console.log('id', id)
     let blog = await blogService.getOne(id)
-    
+
     blog.likes += 1
     await blogService.update(id, blog)
     refreshBlogs()
@@ -113,7 +113,7 @@ const App = () => {
 
   const handleRemoveBlog = async (event, id, title) => {
     event.preventDefault()
-    
+
     try {
       const warning = `Are you sure you want to remove the blog ${title}?`
       if (window.confirm(warning)) {
@@ -134,13 +134,13 @@ const App = () => {
     return <Togglable buttonLabel="add new blog" cancelLabel='cancel' ref={toggleRef}>
       <BlogForm
         createBlog={createBlog}
-        />
+      />
     </Togglable>
   }
 
   const loginForm = () => {
     return (
-    <Togglable buttonLabel="login" cancelLabel='cancel'>
+      <Togglable buttonLabel="login" cancelLabel='cancel'>
 
         <LoginForm
           username={username}
@@ -150,8 +150,8 @@ const App = () => {
           handleSubmit={handleLogin}
         />
 
-    </Togglable>
-  )}
+      </Togglable>
+    )}
 
 
   const Errors = () => {
@@ -188,14 +188,14 @@ const App = () => {
       fontSize: 20
     }
 
-    return <DisplayMessage 
-      text={message} 
+    return <DisplayMessage
+      text={message}
       style={messagesStyle}
       method={setMessage}
       val={null}/>
   }
 
-  const DisplayMessage = ({text, style, method, val}) => {
+  const DisplayMessage = ({ text, style, method, val }) => {
     setTimeout(() => {
       method(val)
     }, 5000)
@@ -217,14 +217,14 @@ const App = () => {
         {blogForm()}
         <h2>blogs</h2>
         {blogs.map(blog =>
-        <Blog 
-          key={blog.id}
-          blog={blog}
-          handleLike={handleLike}
-          handleRemove={handleRemoveBlog}
-          user={user.username} />
+          <Blog
+            key={blog.id}
+            blog={blog}
+            handleLike={handleLike}
+            handleRemove={handleRemoveBlog}
+            user={user.username} />
         )}
-        </div>}
+      </div>}
 
     </div>
   )
