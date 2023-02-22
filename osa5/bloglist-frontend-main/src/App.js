@@ -21,11 +21,12 @@ const App = () => {
 
 
   useEffect(() => {
-    blogService
-      .getAll()
-      .then(blogs =>
-        setBlogs( blogs )
-    )  
+    refreshBlogs()
+    //blogService
+     // .getAll()
+    //  .then(blogs =>
+     //   setBlogs( blogs )
+    //)  
   }, [])
 
   useEffect(() => {
@@ -36,6 +37,20 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  const refreshBlogs = async () => {
+    const blogs = await blogService.getAll()
+
+    setBlogs( blogs.sort((blog1, blog2) => {
+      if (blog1.likes < blog2.likes){
+        return 1
+      }
+      if (blog1.likes > blog2.likes) {
+        return -1
+      }
+      return 0
+    }) )
+  }
 
 
   const createBlog = async (blogObject) => {
@@ -95,9 +110,21 @@ const App = () => {
     let blog = await blogService.getOne(id)
     
     blog.likes += 1
-    console.log(blog)
-    blogService.update(id, blog)
-    // it works! now just make the like count update instantly
+    await blogService.update(id, blog)
+    refreshBlogs()
+
+  }
+
+  const handleRemoveBlog = async (event, id) => {
+    event.preventDefault()
+    
+    try {
+      await blogService.remove(id)
+      refreshBlogs()
+    } catch (exception) {
+      setErrorMessage(exception.message)
+    }
+
   }
 
   const logoutButton = () => {
@@ -191,7 +218,12 @@ const App = () => {
         {blogForm()}
         <h2>blogs</h2>
         {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={handleLike} />
+        <Blog 
+          key={blog.id}
+          blog={blog}
+          handleLike={handleLike}
+          handleRemove={handleRemoveBlog}
+          user={user.username} />
         )}
         </div>}
 

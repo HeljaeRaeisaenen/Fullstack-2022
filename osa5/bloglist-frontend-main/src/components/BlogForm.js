@@ -36,9 +36,12 @@ const BlogForm = ({
     const blogObject = {
       title: newTitle,
       author: newAuthor,
-      url: newUrl,
-      likes: newLikes
+      url: newUrl
     }
+    if (newLikes !== '') {
+      blogObject.likes = newLikes
+    }
+
     console.log(blogObject)
     const success = createBlog(blogObject)
     if (success === true) {voidFormFields()}
