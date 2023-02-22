@@ -1,5 +1,4 @@
-import { useState} from 'react'
-import Togglable from './TogglableTag'
+import { useState, useEffect } from 'react'
 import BlogView from './BlogView'
 
 const Blog = ({blog, handleLike, handleRemove, user}) => {
@@ -13,15 +12,40 @@ const Blog = ({blog, handleLike, handleRemove, user}) => {
     marginBottom: 5
   }
 
-  return <div style={blogStyle}>
-    "{blog.title}" by {blog.author} <Togglable buttonLabel='view' cancelLabel='hide'>
-    <BlogView
+  useEffect(() => {
+    returning()
+  })
+
+  const returning = () => {
+    if (viewState === true) {
+      return <div style={blogStyle}>
+      "{blog.title}" by {blog.author} 
+      <button onClick={() => setViewState(!viewState)}>hide</button>
+      <BlogView
       blog={blog}
       handleLike={handleLike}
       handleRemove={handleRemove}
       user={user}/>
-    </Togglable>
-  </div>  
+        </div>
+    } else {
+      return <div style={blogStyle}>
+      "{blog.title}" by {blog.author} 
+      <button onClick={() => setViewState(!viewState)}>view</button>
+        </div>
+
+    }
+  }
+  return returning()
+  
+  //return <div style={blogStyle}>
+  //  "{blog.title}" by {blog.author} <Togglable buttonLabel='view' cancelLabel='hide'>
+  //  <BlogView
+  //    blog={blog}
+  //    handleLike={handleLike}
+  //    handleRemove={handleRemove}
+  //    user={user}/>
+  //  </Togglable>
+  //</div>  
 }
 
 

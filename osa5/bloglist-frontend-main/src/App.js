@@ -22,11 +22,6 @@ const App = () => {
 
   useEffect(() => {
     refreshBlogs()
-    //blogService
-     // .getAll()
-    //  .then(blogs =>
-     //   setBlogs( blogs )
-    //)  
   }, [])
 
   useEffect(() => {
@@ -41,24 +36,25 @@ const App = () => {
   const refreshBlogs = async () => {
     const blogs = await blogService.getAll()
 
-    setBlogs( blogs.sort((blog1, blog2) => {
-      if (blog1.likes < blog2.likes){
-        return 1
-      }
-      if (blog1.likes > blog2.likes) {
-        return -1
-      }
-      return 0
-    }) )
+    setBlogs( blogs.sort(blogSort) )
   }
 
+  const blogSort = (blog1, blog2) => {
+    if (blog1.likes < blog2.likes){
+      return 1
+    }
+    if (blog1.likes > blog2.likes) {
+      return -1
+    }
+    return 0
+  }
 
   const createBlog = async (blogObject) => {
     try {
       const createdBlog = await blogService
         .create(blogObject)
       
-      setBlogs(blogs.concat(createdBlog))
+      setBlogs(blogs.concat(createdBlog).sort(blogSort))
       //console.log('in method createblog',createdBlog)
 
       setMessage(`Blog ${createdBlog.title} added succesfully`)
@@ -115,12 +111,15 @@ const App = () => {
 
   }
 
-  const handleRemoveBlog = async (event, id) => {
+  const handleRemoveBlog = async (event, id, title) => {
     event.preventDefault()
     
     try {
-      await blogService.remove(id)
-      refreshBlogs()
+      const warning = `Are you sure you want to remove the blog ${title}?`
+      if (window.confirm(warning)) {
+        await blogService.remove(id)
+        refreshBlogs()
+      }
     } catch (exception) {
       setErrorMessage(exception.message)
     }
