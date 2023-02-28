@@ -216,14 +216,16 @@ const App = () => {
         <p>{user.name} logged in {logoutButton()}</p>
         {blogForm()}
         <h2>blogs</h2>
-        {blogs.map(blog =>
-          <Blog
-            key={blog.id}
-            blog={blog}
-            handleLike={handleLike}
-            handleRemove={handleRemoveBlog}
-            user={user.username} />
-        )}
+        <ul>
+          {blogs.map(blog =>
+            <Blog
+              key={blog.id}
+              blog={blog}
+              handleLike={handleLike}
+              handleRemove={handleRemoveBlog}
+              user={user.username} />
+          )}
+        </ul>
       </div>}
 
     </div>

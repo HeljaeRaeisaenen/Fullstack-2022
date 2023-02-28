@@ -18,7 +18,7 @@ const Blog = ({ blog, handleLike, handleRemove, user }) => {
 
   const returning = () => {
     if (viewState === true) {
-      return <div style={blogStyle}>
+      return <div className='blog' style={blogStyle}>
         {blog.title} by {blog.author}
         <button onClick={() => setViewState(!viewState)}>hide</button>
         <BlogView
@@ -28,7 +28,7 @@ const Blog = ({ blog, handleLike, handleRemove, user }) => {
           user={user}/>
       </div>
     } else {
-      return <div style={blogStyle}>
+      return <div className='blog' style={blogStyle}>
         {blog.title} by {blog.author}
         <button onClick={() => setViewState(!viewState)}>view</button>
       </div>
