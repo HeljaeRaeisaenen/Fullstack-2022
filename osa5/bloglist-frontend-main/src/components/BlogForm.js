@@ -18,8 +18,6 @@ const BlogForm = ({
   }
 
   const handleBlogChange = (event) => {
-    //let blog = newBlog
-    //blog[event.target.name] = event.target.value
     let name = event.target.name
     let value = event.target.value
     blogSetter[name](value)
@@ -43,7 +41,7 @@ const BlogForm = ({
       blogObject.likes = newLikes
     }
 
-    console.log(blogObject)
+    //console.log(blogObject)
     const success = createBlog(blogObject)
     if (success === true) {voidFormFields()}
   }
@@ -60,6 +58,7 @@ const BlogForm = ({
             value={newTitle}
             name="title"
             onChange={handleBlogChange}
+            placeholder='blog title here'
           />
         </div>
         <div>
@@ -68,6 +67,7 @@ const BlogForm = ({
             value={newAuthor}
             name="author"
             onChange={handleBlogChange}
+            placeholder='blog author here'
           />
         </div>
         <div>
@@ -76,6 +76,7 @@ const BlogForm = ({
             value={newUrl}
             name="url"
             onChange={handleBlogChange}
+            placeholder='blog url here'
           />
         </div>
         <div>
@@ -84,6 +85,7 @@ const BlogForm = ({
             value={newLikes}
             name="likes"
             onChange={handleBlogChange}
+            placeholder='blog likes here'
           />
         </div>
         <button type="submit">save</button>
