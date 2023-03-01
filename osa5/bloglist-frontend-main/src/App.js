@@ -171,7 +171,8 @@ const App = () => {
       text={errorMessage}
       style={errorStyle}
       method={setErrorMessage}
-      val={null}/>
+      val={null}
+      className='error'/>
   }
 
 
@@ -192,15 +193,16 @@ const App = () => {
       text={message}
       style={messagesStyle}
       method={setMessage}
-      val={null}/>
+      val={null}
+      className='message'/>
   }
 
-  const DisplayMessage = ({ text, style, method, val }) => {
+  const DisplayMessage = ({ text, style, method, val, className }) => {
     setTimeout(() => {
       method(val)
     }, 5000)
     return (
-      <div style={style}>
+      <div className={className} style={style}>
         {text}
       </div>
     )
