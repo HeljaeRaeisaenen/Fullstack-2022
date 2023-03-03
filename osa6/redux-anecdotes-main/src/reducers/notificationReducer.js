@@ -5,23 +5,19 @@ const notifSlice = createSlice({
   initialState: '',
   reducers: {
     voteMessage(state, action) {
-      
+      console.log(JSON.parse(JSON.stringify(state)))
       return `You voted "${action.payload}"`
   
       },
     createdMessage(state, action) {
-      eraseMessage()
       return `You added ${action.payload}`
     },
-    nullMessage(state, action) {
+    nullifyMessage(state, action) {
       return ''
     }
   }
 })
 
-const eraseMessage = () => {
-  setTimeout(nullMessage, 10)
-}
 
-export const { voteMessage, createdMessage ,nullMessage } = notifSlice.actions
+export const { voteMessage, createdMessage, nullifyMessage } = notifSlice.actions
 export default notifSlice.reducer
