@@ -4,20 +4,23 @@ const notifSlice = createSlice({
   name: 'notifications',
   initialState: '',
   reducers: {
-    voteMessage(state, action) {
-      console.log(JSON.parse(JSON.stringify(state)))
-      return `You voted "${action.payload}"`
-  
+    setMessage(state, action) {
+      return action.payload
       },
-    createdMessage(state, action) {
-      return `You added "${action.payload}"`
-    },
     nullifyMessage(state, action) {
       return ''
     }
   }
 })
 
+export const { setMessage, nullifyMessage } = notifSlice.actions
 
-export const { voteMessage, createdMessage, nullifyMessage } = notifSlice.actions
+export const setNotification = (content, seconds) => {
+  return async dispatch => {
+    dispatch(setMessage(content))
+    setTimeout(() => dispatch(nullifyMessage()), seconds*1000)
+
+  }
+}
+
 export default notifSlice.reducer

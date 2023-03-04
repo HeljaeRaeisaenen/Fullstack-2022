@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import anecdoteService from '../services/anecdotes'
 
 /*
 const getId = () => (100000 * Math.random()).toFixed(0)
@@ -10,26 +11,22 @@ const asObject = (anecdote) => {
     votes: 0
   }
 }
+    vote(state, action) {
+      const newanec = action.payload
+      let newstate = state.map(elemnt => elemnt.id !== newanec.id ? elemnt: newanec)
+      return newstate.sort(sortFunction)
+    },
 */
 
 const anecdoteSlice = createSlice({
   name: 'anecdotes',
   initialState: [],
   reducers: {
-    createAnecdote(state, action) {
-      return state.concat(action.payload)
-    },
-    addVote(state, action) {
-      const anecdote = state.find((elemnt) => elemnt.id === action.payload)
-      const newanec = {...anecdote, votes: anecdote.votes + 1}
-      let newstate = state.map(elemnt => elemnt.id !== action.payload ? elemnt: newanec)
-      return newstate.sort(sortFunction)
-    },
     addAnecObject(state, action) {
       return state.concat(action.payload)
     },
     setAnecdotes(state, action) {
-      return action.payload
+      return action.payload.sort(sortFunction)
     }
   }
 })
@@ -41,5 +38,32 @@ const sortFunction = (a,b) => {
 
 }
 
-export const { setAnecdotes, createAnecdote, addVote, addAnecObject } = anecdoteSlice.actions
+export const { setAnecdotes, addAnecObject } = anecdoteSlice.actions
+
+export const initializeAnecdotes = () => {
+  return async dispatch => {
+    const anecdotes = await anecdoteService.getAll()
+    dispatch(setAnecdotes(anecdotes))
+  }
+}
+
+export const createAnecdote = content => {
+  return async dispatch => {
+    const newAnec = await anecdoteService.createNew(content)
+    dispatch(addAnecObject(newAnec))
+  }
+}
+
+export const addVote = (id) => {
+  return async dispatch => {
+    const anecdote = await anecdoteService.getOne(id)
+    const newAnec = {...anecdote, votes: anecdote.votes + 1}
+    await anecdoteService.update(id, newAnec)
+    const newState = await anecdoteService.getAll()
+    dispatch(setAnecdotes(newState))
+  }
+}
+
 export default anecdoteSlice.reducer
+
+

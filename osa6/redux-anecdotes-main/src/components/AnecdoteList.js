@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { addVote } from '../reducers/anecdoteReducer'
-import { voteMessage, nullifyMessage } from '../reducers/notificationReducer'
+import { setNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
   const dispatch = useDispatch()
@@ -10,9 +10,7 @@ const AnecdoteList = () => {
 
   const voteAnecdote = (anecdote) => {
     dispatch(addVote(anecdote.id))
-    // logiikan piäisi kai olla reduserissa eikä täällä, mutten osaa tehdä ssitä
-    dispatch(voteMessage(anecdote.content))
-    setTimeout(() => dispatch(nullifyMessage()), 5000)
+    dispatch(setNotification(`You voted "${anecdote.content}"`, 5))
   }
 
   return <>  
