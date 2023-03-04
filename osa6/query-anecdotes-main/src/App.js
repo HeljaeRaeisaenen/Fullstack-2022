@@ -14,9 +14,10 @@ const App = () => {
   })
 
   const result = useQuery('anecdotes', getAnecdotes, {
+    retry: 1,
     refetchOnWindowFocus: false
   })
-  console.log(result)
+  //console.log(result)
 
   if ( result.isLoading ) {
     return <div>loading data...</div>
