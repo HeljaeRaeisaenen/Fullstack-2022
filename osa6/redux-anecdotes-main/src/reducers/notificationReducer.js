@@ -10,7 +10,7 @@ const notifSlice = createSlice({
   
       },
     createdMessage(state, action) {
-      return `You added ${action.payload}`
+      return `You added "${action.payload}"`
     },
     nullifyMessage(state, action) {
       return ''
