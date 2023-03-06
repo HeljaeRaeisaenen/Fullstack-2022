@@ -1,0 +1,78 @@
+import PropTypes from 'prop-types'
+import { useState } from 'react'
+
+const BlogForm = ({ createBlog }) => {
+	const [newTitle, setNewTitle] = useState('')
+	const [newAuthor, setNewAuthor] = useState('')
+	const [newUrl, setNewUrl] = useState('')
+	const [newLikes, setNewLikes] = useState('')
+
+	const blogSetter = {
+		title: setNewTitle,
+		author: setNewAuthor,
+		url: setNewUrl,
+		likes: setNewLikes,
+	}
+
+	const handleBlogChange = (event) => {
+		let name = event.target.name
+		let value = event.target.value
+		blogSetter[name](value)
+	}
+
+	const voidFormFields = () => {
+		setNewTitle('')
+		setNewAuthor('')
+		setNewUrl('')
+		setNewLikes('')
+	}
+
+	const addBlog = async (event) => {
+		event.preventDefault()
+		const blogObject = {
+			title: newTitle,
+			author: newAuthor,
+			url: newUrl,
+		}
+		if (newLikes !== '') {
+			blogObject.likes = newLikes
+		}
+
+		//console.log(blogObject)
+		const success = createBlog(blogObject)
+		if (success === true) {
+			voidFormFields()
+		}
+	}
+
+	return (
+		<div>
+			<h2>Add a new blog</h2>
+
+			<form onSubmit={addBlog}>
+				<div>
+					title:
+					<input value={newTitle} name="title" onChange={handleBlogChange} id="title" />
+				</div>
+				<div>
+					author:
+					<input value={newAuthor} name="author" onChange={handleBlogChange} id="author" />
+				</div>
+				<div>
+					URL:
+					<input value={newUrl} name="url" onChange={handleBlogChange} id="url" />
+				</div>
+				<div>
+					likes:
+					<input value={newLikes} name="likes" onChange={handleBlogChange} id="likes" />
+				</div>
+				<button type="submit">save</button>
+			</form>
+		</div>
+	)
+}
+BlogForm.propTypes = {
+	createBlog: PropTypes.func.isRequired,
+}
+
+export default BlogForm
