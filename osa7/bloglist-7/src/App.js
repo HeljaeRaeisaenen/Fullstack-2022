@@ -8,7 +8,8 @@ import Togglable from './components/TogglableTag'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { messageChange, errorChange } from './reducers/messageReducer'
-import { setBlogs, addBlog } from './reducers/blogsReducer'
+import { refreshBlogs, createBlog, addLike, removeBlog } from './reducers/blogsReducer'
+import { setUser, removeUser } from './reducers/userReducer'
 
 const App = () => {
 	const dispatch = useDispatch()
@@ -16,7 +17,8 @@ const App = () => {
 
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
-	const [user, setUser] = useState(null)
+	//const [user, setUser] = useState(null)
+	const user = useSelector((state) => state.user)
 
 	const errorMessage = useSelector((state) => state.messages.error)
 	const message = useSelector((state) => state.messages.message)
@@ -24,36 +26,47 @@ const App = () => {
 	const toggleRef = useRef()
 
 	useEffect(() => {
-		refreshBlogs()
-	}, [])
+		dispatch(refreshBlogs())
+	}, [dispatch])
 
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON)
-			setUser(user)
-			blogService.setToken(user.token)
+			dispatch(setUser(user))
+			loginService.setToken(user.token)
 		}
 	}, [])
 
-	const refreshBlogs = async () => {
-		const blogs = await blogService.getAll()
-		dispatch(setBlogs(blogs))
-	}
+	const addBlog = (blogObject) => {
+		toggleRef.current.toggleVisibility()
+		const result = dispatch(createBlog(blogObject))
 
-	const createBlog = async (blogObject) => {
-		try {
-			const createdBlog = await blogService.create(blogObject)
-
-			dispatch(addBlog(createdBlog))
-			//console.log('in method createblog',createdBlog)
-
-			dispatch(messageChange(`Blog ${createdBlog.title} added succesfully`))
-			toggleRef.current.toggleVisibility()
+		if (result) {
+			dispatch(messageChange(`Blog ${blogObject.title} added succesfully`))
 			return true
-		} catch (exception) {
+		} else {
 			dispatch(errorChange('Fill all fields'))
 			return false
+		}
+	}
+
+	const handleLike = async (event, id) => {
+		event.preventDefault()
+		//console.log('id', id)
+		dispatch(addLike(id))
+	}
+
+	const handleRemoveBlog = async (event, id, title) => {
+		event.preventDefault()
+		const warning = `Are you sure you want to remove the blog ${title}?`
+		if (window.confirm(warning)) {
+			try {
+				dispatch(removeBlog(id))
+				dispatch(messageChange(`Blog ${title}`))
+			} catch (exception) {
+				dispatch(errorChange(result))
+			}
 		}
 	}
 
@@ -66,15 +79,15 @@ const App = () => {
 				password,
 			})
 
-			blogService.setToken(user.token)
+			loginService.setToken(user.token)
 			window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
-			setUser(user)
+			dispatch(setUser(user))
 			setUsername('')
 			setPassword('')
 			//experiment:
 			setTimeout(() => {
 				console.log('automatic logout')
-				handleLogout()
+				handleLogout(null)
 			}, 15 * 60000)
 		} catch (exception) {
 			dispatch(errorChange('wrong credentials'))
@@ -82,36 +95,11 @@ const App = () => {
 	}
 
 	const handleLogout = async (event) => {
-		event.preventDefault()
+		if (event) event.preventDefault()
 		console.log('logging out', user.username)
-		blogService.setToken(null)
+		loginService.setToken(null)
 		window.localStorage.clear()
-		setUser(null)
-	}
-
-	const handleLike = async (event, id) => {
-		event.preventDefault()
-		//console.log('id', id)
-		let blog = await blogService.getOne(id)
-		console.log(blog)
-
-		blog.likes += 1
-		await blogService.update(id, blog)
-		refreshBlogs()
-	}
-
-	const handleRemoveBlog = async (event, id, title) => {
-		event.preventDefault()
-
-		try {
-			const warning = `Are you sure you want to remove the blog ${title}?`
-			if (window.confirm(warning)) {
-				await blogService.remove(id)
-				refreshBlogs()
-			}
-		} catch (exception) {
-			dispatch(errorChange(exception.message))
-		}
+		dispatch(removeUser())
 	}
 
 	const logoutButton = () => {
@@ -121,7 +109,7 @@ const App = () => {
 	const blogForm = () => {
 		return (
 			<Togglable buttonLabel="add new blog" cancelLabel="cancel" ref={toggleRef}>
-				<BlogForm createBlog={createBlog} />
+				<BlogForm addBlog={addBlog} />
 			</Togglable>
 		)
 	}
