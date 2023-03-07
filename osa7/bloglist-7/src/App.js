@@ -1,20 +1,25 @@
 import { useState, useEffect, useRef } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/TogglableTag'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { messageChange, errorChange } from './reducers/messageReducer'
+import { setBlogs, addBlog } from './reducers/blogsReducer'
 
 const App = () => {
-	const [blogs, setBlogs] = useState([])
+	const dispatch = useDispatch()
+	const blogs = useSelector((state) => state.blogs)
 
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [user, setUser] = useState(null)
 
-	const [errorMessage, setErrorMessage] = useState(null)
-	const [message, setMessage] = useState(null)
+	const errorMessage = useSelector((state) => state.messages.error)
+	const message = useSelector((state) => state.messages.message)
 
 	const toggleRef = useRef()
 
@@ -33,32 +38,21 @@ const App = () => {
 
 	const refreshBlogs = async () => {
 		const blogs = await blogService.getAll()
-
-		setBlogs(blogs.sort(blogSort))
-	}
-
-	const blogSort = (blog1, blog2) => {
-		if (blog1.likes < blog2.likes) {
-			return 1
-		}
-		if (blog1.likes > blog2.likes) {
-			return -1
-		}
-		return 0
+		dispatch(setBlogs(blogs))
 	}
 
 	const createBlog = async (blogObject) => {
 		try {
 			const createdBlog = await blogService.create(blogObject)
 
-			setBlogs(blogs.concat(createdBlog).sort(blogSort))
+			dispatch(addBlog(createdBlog))
 			//console.log('in method createblog',createdBlog)
 
-			setMessage(`Blog ${createdBlog.title} added succesfully`)
+			dispatch(messageChange(`Blog ${createdBlog.title} added succesfully`))
 			toggleRef.current.toggleVisibility()
 			return true
 		} catch (exception) {
-			setErrorMessage('Fill all fields')
+			dispatch(errorChange('Fill all fields'))
 			return false
 		}
 	}
@@ -83,7 +77,7 @@ const App = () => {
 				handleLogout()
 			}, 15 * 60000)
 		} catch (exception) {
-			setErrorMessage('wrong credentials')
+			dispatch(errorChange('wrong credentials'))
 		}
 	}
 
@@ -97,8 +91,9 @@ const App = () => {
 
 	const handleLike = async (event, id) => {
 		event.preventDefault()
-		console.log('id', id)
+		//console.log('id', id)
 		let blog = await blogService.getOne(id)
+		console.log(blog)
 
 		blog.likes += 1
 		await blogService.update(id, blog)
@@ -115,7 +110,7 @@ const App = () => {
 				refreshBlogs()
 			}
 		} catch (exception) {
-			setErrorMessage(exception.message)
+			dispatch(errorChange(exception.message))
 		}
 	}
 
@@ -146,7 +141,7 @@ const App = () => {
 	}
 
 	const Errors = () => {
-		if (errorMessage === null) return
+		if (!errorMessage) return
 
 		const errorStyle = {
 			color: 'red',
@@ -162,15 +157,14 @@ const App = () => {
 			<DisplayMessage
 				text={errorMessage}
 				style={errorStyle}
-				method={setErrorMessage}
-				val={null}
+				method={() => dispatch(errorChange(null))}
 				className="error"
 			/>
 		)
 	}
 
 	const Messages = () => {
-		if (message === null) return
+		if (!message) return
 
 		const messagesStyle = {
 			color: 'blue',
@@ -186,16 +180,15 @@ const App = () => {
 			<DisplayMessage
 				text={message}
 				style={messagesStyle}
-				method={setMessage}
-				val={null}
+				method={() => dispatch(messageChange(null))}
 				className="message"
 			/>
 		)
 	}
 
-	const DisplayMessage = ({ text, style, method, val, className }) => {
+	const DisplayMessage = ({ text, style, method, className }) => {
 		setTimeout(() => {
-			method(val)
+			method()
 		}, 5000)
 		return (
 			<div className={className} style={style}>
