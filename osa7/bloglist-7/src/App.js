@@ -1,15 +1,19 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
+import { Routes, Route, Link } from 'react-router-dom'
+
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/TogglableTag'
-import blogService from './services/blogs'
+import UsersInfo from './components/UsersInfo'
 import loginService from './services/login'
+import blogsService from './services/blogs'
 import { messageChange, errorChange } from './reducers/messageReducer'
 import { refreshBlogs, createBlog, addLike, removeBlog } from './reducers/blogsReducer'
 import { setUser, removeUser } from './reducers/userReducer'
+import { getUsers } from './reducers/usersReducer'
 
 const App = () => {
 	const dispatch = useDispatch()
@@ -17,8 +21,9 @@ const App = () => {
 
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
-	//const [user, setUser] = useState(null)
+
 	const user = useSelector((state) => state.user)
+	const users = useSelector((state) => state.users)
 
 	const errorMessage = useSelector((state) => state.messages.error)
 	const message = useSelector((state) => state.messages.message)
@@ -30,11 +35,15 @@ const App = () => {
 	}, [dispatch])
 
 	useEffect(() => {
+		dispatch(getUsers())
+	}, [dispatch])
+
+	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON)
 			dispatch(setUser(user))
-			loginService.setToken(user.token)
+			blogsService.setToken(user.token)
 		}
 	}, [])
 
@@ -79,7 +88,7 @@ const App = () => {
 				password,
 			})
 
-			loginService.setToken(user.token)
+			blogsService.setToken(user.token)
 			window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
 			dispatch(setUser(user))
 			setUsername('')
@@ -97,7 +106,7 @@ const App = () => {
 	const handleLogout = async (event) => {
 		if (event) event.preventDefault()
 		console.log('logging out', user.username)
-		loginService.setToken(null)
+		blogsService.setToken(null)
 		window.localStorage.clear()
 		dispatch(removeUser())
 	}
@@ -184,7 +193,9 @@ const App = () => {
 			</div>
 		)
 	}
-
+	const padding = {
+		padding: 5,
+	}
 	return (
 		<div>
 			<h1>bloglist</h1>
@@ -193,22 +204,58 @@ const App = () => {
 			{!user && loginForm()}
 			{user && (
 				<div>
+					<Link style={padding} to="/">
+						home
+					</Link>
+					<Link style={padding} to="/users">
+						users
+					</Link>
 					<p>
 						{user.name} logged in {logoutButton()}
 					</p>
 					{blogForm()}
-					<h2>blogs</h2>
-					<ul>
-						{blogs.map((blog) => (
-							<Blog
-								key={blog.id}
-								blog={blog}
-								handleLike={handleLike}
-								handleRemove={handleRemoveBlog}
-								user={user.username}
-							/>
-						))}
-					</ul>
+					<Routes>
+						<Route
+							path="/users"
+							element={
+								<>
+									{users && (
+										<div>
+											<h2>users</h2>
+											<ul>
+												{users.map((u) => (
+													<UsersInfo
+														key={u.username}
+														username={u.username}
+														blogsAmnt={u.blogs.length}
+													/>
+												))}
+											</ul>
+										</div>
+									)}
+								</>
+							}
+						/>
+						<Route
+							path="/"
+							element={
+								<>
+									<h2>blogs</h2>
+									<ul>
+										{blogs.map((blog) => (
+											<Blog
+												key={blog.id}
+												blog={blog}
+												handleLike={handleLike}
+												handleRemove={handleRemoveBlog}
+												user={user.username}
+											/>
+										))}
+									</ul>
+								</>
+							}
+						/>
+					</Routes>
 				</div>
 			)}
 		</div>

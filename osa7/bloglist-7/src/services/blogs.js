@@ -1,12 +1,12 @@
 import axios from 'axios'
 const baseUrl = '/api/blogs'
-/*
+
 let token = null
 
 const setToken = (newToken) => {
 	token = `Bearer ${newToken}`
 }
-*/
+
 const getAll = async () => {
 	const response = await axios.get(baseUrl)
 	return response.data //request.then(response => response.data)
@@ -47,4 +47,4 @@ const remove = async (id) => {
 	return response.data
 }
 
-export default { getAll, getOne, create, update, remove }
+export default { getAll, getOne, create, setToken, update, remove }
