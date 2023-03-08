@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import blogService from '../services/blogs'
+import { messageChange, errorChange } from './messageReducer'
 
 const blogsSlice = createSlice({
 	name: 'blogs',
@@ -40,11 +41,10 @@ export const createBlog = (blogObject) => {
 			const createdBlog = await blogService.create(blogObject)
 
 			dispatch(addBlog(createdBlog))
+			dispatch(messageChange(`Blog ${createdBlog.title} added succesfully`))
 			//console.log('in method createblog',createdBlog)
-
-			return true
 		} catch (exception) {
-			return false
+			dispatch(errorChange('Fill all fields'))
 		}
 	}
 }

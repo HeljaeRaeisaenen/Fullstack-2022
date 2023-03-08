@@ -49,13 +49,13 @@ const App = () => {
 
 	const addBlog = (blogObject) => {
 		toggleRef.current.toggleVisibility()
-		const result = dispatch(createBlog(blogObject))
+		dispatch(createBlog(blogObject))
 
-		if (result) {
-			dispatch(messageChange(`Blog ${blogObject.title} added succesfully`))
+		if (!errorMessage) {
+			console.log('no error', errorMessage)
 			return true
 		} else {
-			dispatch(errorChange('Fill all fields'))
+			console.log(errorMessage)
 			return false
 		}
 	}
@@ -72,7 +72,7 @@ const App = () => {
 		if (window.confirm(warning)) {
 			try {
 				dispatch(removeBlog(id))
-				dispatch(messageChange(`Blog ${title}`))
+				dispatch(messageChange(`Blog ${title} removed`))
 			} catch (exception) {
 				dispatch(errorChange(result))
 			}
@@ -193,6 +193,40 @@ const App = () => {
 			</div>
 		)
 	}
+
+	const usersView = () => (
+		<>
+			{users && (
+				<div>
+					<h2>users</h2>
+					<ul>
+						{users.map((u) => (
+							<UsersInfo key={u.username} username={u.username} blogsAmnt={u.blogs.length} />
+						))}
+					</ul>
+				</div>
+			)}
+		</>
+	)
+
+	const blogsView = () => (
+		<>
+			{blogForm()}
+			<h2>blogs</h2>
+			<ul>
+				{blogs.map((blog) => (
+					<Blog
+						key={blog.id}
+						blog={blog}
+						handleLike={handleLike}
+						handleRemove={handleRemoveBlog}
+						user={user.username}
+					/>
+				))}
+			</ul>
+		</>
+	)
+
 	const padding = {
 		padding: 5,
 	}
@@ -205,7 +239,7 @@ const App = () => {
 			{user && (
 				<div>
 					<Link style={padding} to="/">
-						home
+						blogs
 					</Link>
 					<Link style={padding} to="/users">
 						users
@@ -213,48 +247,9 @@ const App = () => {
 					<p>
 						{user.name} logged in {logoutButton()}
 					</p>
-					{blogForm()}
 					<Routes>
-						<Route
-							path="/users"
-							element={
-								<>
-									{users && (
-										<div>
-											<h2>users</h2>
-											<ul>
-												{users.map((u) => (
-													<UsersInfo
-														key={u.username}
-														username={u.username}
-														blogsAmnt={u.blogs.length}
-													/>
-												))}
-											</ul>
-										</div>
-									)}
-								</>
-							}
-						/>
-						<Route
-							path="/"
-							element={
-								<>
-									<h2>blogs</h2>
-									<ul>
-										{blogs.map((blog) => (
-											<Blog
-												key={blog.id}
-												blog={blog}
-												handleLike={handleLike}
-												handleRemove={handleRemoveBlog}
-												user={user.username}
-											/>
-										))}
-									</ul>
-								</>
-							}
-						/>
+						<Route path="/users" element={usersView()} />
+						<Route path="/" element={blogsView()} />
 					</Routes>
 				</div>
 			)}
