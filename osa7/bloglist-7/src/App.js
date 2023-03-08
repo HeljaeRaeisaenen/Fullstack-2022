@@ -215,13 +215,11 @@ const App = () => {
 			<h2>blogs</h2>
 			<ul>
 				{blogs.map((blog) => (
-					<Blog
-						key={blog.id}
-						blog={blog}
-						handleLike={handleLike}
-						handleRemove={handleRemoveBlog}
-						user={user.username}
-					/>
+					<div key={blog.id} style={blogStyle}>
+						<Link style={padding} to={`/blogs/${blog.id}`}>
+							{blog.title}
+						</Link>
+					</div>
 				))}
 			</ul>
 		</>
@@ -230,6 +228,14 @@ const App = () => {
 	const padding = {
 		padding: 5,
 	}
+	const blogStyle = {
+		paddingTop: 10,
+		paddingLeft: 2,
+		border: 'solid',
+		borderWidth: 1,
+		marginBottom: 5,
+	}
+
 	return (
 		<div>
 			<h1>bloglist</h1>
@@ -250,6 +256,22 @@ const App = () => {
 					<Routes>
 						<Route path="/users" element={usersView()} />
 						<Route path="/" element={blogsView()} />
+						<Route
+							path="/blogs/:id"
+							element={
+								<Blog
+									blogs={blogs}
+									handleLike={handleLike}
+									handleRemove={handleRemoveBlog}
+									user={user}
+									back={() => (
+										<Link style={padding} to="/">
+											back to blogs
+										</Link>
+									)}
+								/>
+							}
+						/>
 					</Routes>
 				</div>
 			)}
