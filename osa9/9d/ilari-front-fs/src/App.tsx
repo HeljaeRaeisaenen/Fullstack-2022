@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 
 import diaryService from './services/diaryService';
 import { DiaryEntry } from './types';
@@ -26,7 +26,7 @@ function App() {
     <h1>Diary entries</h1>
     <EntryList entries={entries}/>
     </>
-  )
+  );
 }
 
 export default App;
